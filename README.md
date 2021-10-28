@@ -19,15 +19,15 @@ func main() {
     defer log.Sync()
 
     log.Info("Hello world!")
-    log.Info("Hello ", String("string_key", "value"), Int("int_key", 666))
+    log.Info("Hello ", log.String("string_key", "value"), log.Int("int_key", 666))
     log.Infof("Hello %s!", "world")
     log.Infow("Hello ", "string_key", "value", "int_key", 666)
 
     log.WithName("logger1").Warn("I am logger1")
     log.WithName("logger2").Warn("I am logger2")
 
-    log.WithFields(String("f1", "value"), Int("f2", 888)).Error("Hello world!")
-    log.WithName("logger3").WithFields(String("f1", "value"), Int("f2", 888)).Error("Hello world!")
+    log.WithFields(log.String("f1", "value"), log.Int("f2", 888)).Error("Hello world!")
+    log.WithName("logger3").WithFields(log.String("f1", "value"), log.Int("f2", 888)).Error("Hello world!")
 }
 ```
 
@@ -40,7 +40,7 @@ func main() {
     defer log.Sync()
 
     opts := &log.Options{
-        RotateOptions: &log.RotateOptions{ // useful if EnableRotate is true
+        RotateOptions: &log.RotateOptions{ // take effect when EnableRotate is true
             MaxSize:    1,     // MB
             MaxAge:     0,     // Day
             MaxBackups: 2,     // saved files count
@@ -61,23 +61,23 @@ func main() {
             "stderr", // os.Stderr
             "./error.log",
         },
-        EnableRotate: true, // if rotate log files
+        EnableRotate: true, // log files rotate or not
     }
 
     log.Init(opts)
 
     log.Info("Hello world!")
-    log.Info("Hello ", String("string_key", "value"), Int("int_key", 666))
+    log.Info("Hello ", log.String("string_key", "value"), log.Int("int_key", 666))
     log.Infof("Hello %s!", "world")
     log.Infow("Hello ", "string_key", "value", "int_key", 666)
 
     log.WithName("logger1").Warn("I am logger1")
     log.WithName("logger2").Warn("I am logger2")
 
-    log.WithFields(String("f1", "value"), Int("f2", 888)).Error("Hello world!")
-    log.WithName("logger3").WithFields(String("f1", "value"), Int("f2", 888)).Error("Hello world!")
+    log.WithFields(log.String("f1", "value"), log.Int("f2", 888)).Error("Hello world!")
+    log.WithName("logger3").WithFields(log.String("f1", "value"), log.Int("f2", 888)).Error("Hello world!")
 
-    // log file rotate test
+    // log files rotation test
     for i := 0; i <= 20000; i++ {
       	log.Infof("hello world: %d", i)
     }

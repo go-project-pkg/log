@@ -1,37 +1,67 @@
 package log
 
-import (
-	"testing"
-)
+import "testing"
 
 func Test_Init(t *testing.T) {
 	defer std.Sync()
 
 	opts := &Options{
-		Format: "console",
+		RotateOptions: &RotateOptions{ // useful if EnableRotate is true
+			MaxSize:    1,     // MB
+			MaxAge:     0,     // Day
+			MaxBackups: 2,     // saved files count
+			LocalTime:  true,  // use local time in log file name
+			Compress:   false, // gzip
+		},
+		Name:              "",        // logger name
+		Level:             "debug",   // debug, info, warn, error, panic, dpanic, fatal
+		Format:            "console", // json, console/text
+		DisableColor:      false,
+		DisableCaller:     false,
+		DisableStacktrace: false,
+		OutputPaths: []string{ // aplication's all levels logs
+			"stdout", // os.Stdout
+			"./app.log",
+		},
+		ErrorOutputPaths: []string{ // zap internal errors, not include application's any level logs
+			"stderr", // os.Stderr
+			"./error.log",
+		},
+		EnableRotate: true, // if rotate log files
 	}
 
 	Init(opts)
 
-	std.Info("Hello world!\n")
-	std.Info("Hello world!", String("key", "value"), Int("key", 2))
+	std.Debug("Hello world!")
+	std.Debug("Hello ", String("string_key", "value"), Int("int_key", 666))
+	std.Debugf("Hello %s!", "world")
+	std.Debugw("Hello ", "string_key", "value", "int_key", 666)
 
-	std.Infof("Hello world!")
-	std.Infof("Hello %s!\n", "levin")
+	println()
 
-	std.Infow("Hello world!")
-	std.Infow("Hello ", String("key", "value"))
-	std.Infow("Hello ", "key", "value")
-	std.Infow("Hello world!", "foo", "bar")
+	std.Info("Hello world!")
+	std.Info("Hello ", String("string_key", "value"), Int("int_key", 666))
+	std.Infof("Hello %s!", "world")
+	std.Infow("Hello ", "string_key", "value", "int_key", 666)
 
-	std.WithName("l1").Infow("nihao", "key", "value")
-	std.WithName("l2").Infow("nihao", "key", "value")
-	std.WithName("l3").Infow("nihao", "key", "value")
+	println()
 
-	std.WithFields(String("nihao", "xxx")).Infow("Hello world!", "bar", "foo")
-	std.WithFields(String("jin", "ying"), Int("wang", 6)).Infow("Hello world!", "bar", "foo")
+	std.WithName("logger1").Warn("I am logger1")
+	std.WithName("logger2").Warn("I am logger2")
 
-	logger1 := std.WithName("levin").WithFields(String("key1", "value1"))
-	logger1.Info("info message")
-	logger1.Warn("warning message")
+	println()
+
+	std.WithFields(String("f1", "value"), Int("f2", 888)).Error("Hello world!")
+	std.WithName("logger3").WithFields(String("f1", "value"), Int("f2", 888)).Error("Hello world!")
+
+	println()
+
+	//std.DPanic("dpanic message")
+	//std.Panic("panic message")
+	//std.Fatal("fatal message")
+
+	// log file rotate test
+	for i := 0; i <= 20000; i++ {
+		std.Infof("hello world: %d", i)
+	}
 }

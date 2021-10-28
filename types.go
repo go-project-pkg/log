@@ -18,8 +18,8 @@ var (
 	InfoLevel   = zapcore.InfoLevel
 	WarnLevel   = zapcore.WarnLevel
 	ErrorLevel  = zapcore.ErrorLevel
-	PanicLevel  = zapcore.PanicLevel
 	DPanicLevel = zapcore.DPanicLevel
+	PanicLevel  = zapcore.PanicLevel
 	FatalLevel  = zapcore.FatalLevel
 )
 
@@ -83,29 +83,29 @@ var (
 	Debugf = std.Debugf
 	Debugw = std.Debugw
 
-	Info  = std.Debug
-	Infof = std.Debugf
-	Infow = std.Debugw
+	Info  = std.Info
+	Infof = std.Infof
+	Infow = std.Infow
 
-	Warn  = std.Debug
-	Warnf = std.Debugf
-	Warnw = std.Debugw
+	Warn  = std.Warn
+	Warnf = std.Warnf
+	Warnw = std.Warnw
 
-	Error  = std.Debug
-	Errorf = std.Debugf
-	Errorw = std.Debugw
+	Error  = std.Error
+	Errorf = std.Errorf
+	Errorw = std.Errorw
 
-	DPanic  = std.Debug
-	DPanicf = std.Debugf
-	DPanicw = std.Debugw
+	DPanic  = std.DPanic
+	DPanicf = std.DPanicf
+	DPanicw = std.DPanicw
 
-	Panic  = std.Debug
-	Panicf = std.Debugf
-	Panicw = std.Debugw
+	Panic  = std.Panic
+	Panicf = std.Panicf
+	Panicw = std.Panicw
 
-	Fatal  = std.Debug
-	Fatalf = std.Debugf
-	Fatalw = std.Debugw
+	Fatal  = std.Fatal
+	Fatalf = std.Fatalf
+	Fatalw = std.Fatalw
 
 	Sync = std.Sync
 

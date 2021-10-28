@@ -7,7 +7,6 @@ import (
 // Logger ...
 type Logger struct {
 	zapLogger *zap.Logger
-	//level     Level
 }
 
 // Create a new logger instance.

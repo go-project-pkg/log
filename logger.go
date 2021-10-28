@@ -54,7 +54,7 @@ func (l *Logger) Infof(format string, v ...interface{}) {
 }
 
 // Infow ...
-func (l Logger) Infow(msg string, keysAndValues ...interface{}) {
+func (l *Logger) Infow(msg string, keysAndValues ...interface{}) {
 	l.zapLogger.Sugar().Infow(msg, keysAndValues...)
 }
 
@@ -88,21 +88,6 @@ func (l *Logger) Errorw(msg string, keysAndValues ...interface{}) {
 	l.zapLogger.Sugar().Errorw(msg, keysAndValues...)
 }
 
-// Panic ...
-func (l *Logger) Panic(msg string, fields ...Field) {
-	l.zapLogger.Panic(msg, fields...)
-}
-
-// Panicf ...
-func (l *Logger) Panicf(format string, v ...interface{}) {
-	l.zapLogger.Sugar().Panicf(format, v...)
-}
-
-// Panicw ...
-func (l *Logger) Panicw(msg string, keysAndValues ...interface{}) {
-	l.zapLogger.Sugar().Panicw(msg, keysAndValues...)
-}
-
 // DPanic ...
 func (l *Logger) DPanic(msg string, fields ...Field) {
 	l.zapLogger.DPanic(msg, fields...)
@@ -116,6 +101,21 @@ func (l *Logger) DPanicf(format string, v ...interface{}) {
 // DPanicw ...
 func (l *Logger) DPanicw(msg string, keysAndValues ...interface{}) {
 	l.zapLogger.Sugar().DPanicw(msg, keysAndValues...)
+}
+
+// Panic ...
+func (l *Logger) Panic(msg string, fields ...Field) {
+	l.zapLogger.Panic(msg, fields...)
+}
+
+// Panicf ...
+func (l *Logger) Panicf(format string, v ...interface{}) {
+	l.zapLogger.Sugar().Panicf(format, v...)
+}
+
+// Panicw ...
+func (l *Logger) Panicw(msg string, keysAndValues ...interface{}) {
+	l.zapLogger.Sugar().Panicw(msg, keysAndValues...)
 }
 
 // Fatal ...

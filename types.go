@@ -112,3 +112,38 @@ var (
 	WithName   = std.WithName
 	WithFields = std.WithFields
 )
+
+func resetDefaultLogger() {
+	Debug = std.Debug
+	Debugf = std.Debugf
+	Debugw = std.Debugw
+
+	Info = std.Info
+	Infof = std.Infof
+	Infow = std.Infow
+
+	Warn = std.Warn
+	Warnf = std.Warnf
+	Warnw = std.Warnw
+
+	Error = std.Error
+	Errorf = std.Errorf
+	Errorw = std.Errorw
+
+	DPanic = std.DPanic
+	DPanicf = std.DPanicf
+	DPanicw = std.DPanicw
+
+	Panic = std.Panic
+	Panicf = std.Panicf
+	Panicw = std.Panicw
+
+	Fatal = std.Fatal
+	Fatalf = std.Fatalf
+	Fatalw = std.Fatalw
+
+	Sync = std.Sync
+
+	WithName = std.WithName
+	WithFields = std.WithFields
+}

@@ -25,6 +25,7 @@ func Init(opts *Options) {
 	mu.Lock()
 	defer mu.Unlock()
 	std = New(opts)
+	resetDefaultLogger()
 }
 
 // New logger instance with given options.

@@ -5,6 +5,11 @@ import (
 	"go.uber.org/zap/zapcore"
 )
 
+const (
+	// ContextLoggerName is logger key from context.Context.
+	ContextLoggerName = "contextLgger"
+)
+
 type (
 	// Field ...
 	Field = zapcore.Field
@@ -111,6 +116,11 @@ var (
 
 	WithName   = std.WithName
 	WithFields = std.WithFields
+
+	ToContext   = std.ToContext
+	FromContext = std.FromContext
+
+	C = std.C
 )
 
 func resetDefaultLogger() {
@@ -146,4 +156,9 @@ func resetDefaultLogger() {
 
 	WithName = std.WithName
 	WithFields = std.WithFields
+
+	ToContext = std.ToContext
+	FromContext = std.FromContext
+
+	C = std.C
 }

@@ -1,6 +1,9 @@
 package log
 
-import "testing"
+import (
+	"context"
+	"testing"
+)
 
 func Test_Init(t *testing.T) {
 	defer std.Sync()
@@ -74,4 +77,11 @@ func Test_Init(t *testing.T) {
 	for i := 0; i <= 20000; i++ {
 		std.Infof("hello world: %d", i)
 	}
+}
+
+func Test_ToContext_FromContext(t *testing.T) {
+	defer std.Sync()
+
+	ctx := std.WithFields(String("f1", "value"), Int("f2", 888)).ToContext(context.Background())
+	std.FromContext(ctx).Info("hello world!")
 }

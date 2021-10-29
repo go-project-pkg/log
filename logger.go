@@ -1,8 +1,15 @@
 package log
 
 import (
+	"context"
+
+	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 )
+
+type ctxKey int
+
+const logContextKey ctxKey = iota
 
 // Logger ...
 type Logger struct {
@@ -16,16 +23,70 @@ func newLogger(l *zap.Logger) *Logger {
 	}
 }
 
-// WithName specify logger name
+// WithName custom logger name.
 func (l *Logger) WithName(name string) *Logger {
 	logger := l.zapLogger.Named(name)
 	return newLogger(logger)
 }
 
-// WithFields ...
+// WithFields custom other log entry fileds.
 func (l *Logger) WithFields(fields ...Field) *Logger {
 	logger := l.zapLogger.With(fields...)
 	return newLogger(logger)
+}
+
+// ToContext put logger to context.
+func (l *Logger) ToContext(ctx context.Context) context.Context {
+	return context.WithValue(ctx, logContextKey, l)
+}
+
+// FromContext return logger from context.
+func (l *Logger) FromContext(ctx context.Context) *Logger {
+	if ctx != nil {
+		logger := ctx.Value(logContextKey)
+		if logger != nil {
+			return logger.(*Logger)
+		}
+	}
+
+	return l.WithName("UnknownContext")
+}
+
+// C get logger from gin.Context.
+//
+// Usage example:
+//
+// This is a middleware that put logger into gin.Context:
+//
+//func Context() gin.HandlerFunc {
+//return func(c *gin.Context) {
+//l := log.WithFields(
+//log.String("x-request-id", c.GetString(XRequestIDKey)),
+//log.String("username", c.GetString(UsernameKey)),
+//)
+//c.Set(log.ContextLoggerName, l)
+//c.Next()
+//}
+//}
+//
+// Get logger that with fileds from gin.Context:
+//
+//func (u *UserController) Get(c *gin.Context) {
+//log.C(c).Debug("user get called")
+//}
+//
+func (l *Logger) C(ctx context.Context) *Logger {
+	ctxLogger, ok := ctx.(*gin.Context).Get(ContextLoggerName)
+	if !ok {
+		return l
+	}
+
+	cl, ok := ctxLogger.(*Logger)
+	if !ok {
+		return l
+	}
+
+	return cl
 }
 
 // Debug ...

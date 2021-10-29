@@ -35,6 +35,14 @@ func (l *Logger) WithFields(fields ...Field) *Logger {
 	return newLogger(logger)
 }
 
+// WithHooks is different from SetHooks,
+// SetHooks is for global logger,
+// WithHooks is for the new logger.
+func (l *Logger) WithHooks(hooks ...Hook) *Logger {
+	logger := l.zapLogger.WithOptions(zap.Hooks(hooks...))
+	return newLogger(logger)
+}
+
 // ToContext put logger to context.
 func (l *Logger) ToContext(ctx context.Context) context.Context {
 	return context.WithValue(ctx, logContextKey, l)

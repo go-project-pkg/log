@@ -2,11 +2,13 @@ package log
 
 import (
 	"context"
+	"errors"
+	"fmt"
 	"testing"
 )
 
 func Test_Init(t *testing.T) {
-	defer std.Sync()
+	defer Sync()
 
 	opts := &Options{
 		// Take effect when EnableRotate is true.
@@ -45,43 +47,83 @@ func Test_Init(t *testing.T) {
 
 	Init(opts)
 
-	std.Debug("Hello world!")
-	std.Debug("Hello ", String("string_key", "value"), Int("int_key", 666))
-	std.Debugf("Hello %s!", "world")
-	std.Debugw("Hello ", "string_key", "value", "int_key", 666)
+	Debug("Hello world!")
+	Debug("Hello ", String("string_key", "value"), Int("int_key", 666))
+	Debugf("Hello %s!", "world")
+	Debugw("Hello ", "string_key", "value", "int_key", 666)
 
 	println()
 
-	std.Info("Hello world!")
-	std.Info("Hello ", String("string_key", "value"), Int("int_key", 666))
-	std.Infof("Hello %s!", "world")
-	std.Infow("Hello ", "string_key", "value", "int_key", 666)
+	Info("Hello world!")
+	Info("Hello ", String("string_key", "value"), Int("int_key", 666))
+	Infof("Hello %s!", "world")
+	Infow("Hello ", "string_key", "value", "int_key", 666)
 
 	println()
 
-	std.WithName("logger1").Warn("I am logger1")
-	std.WithName("logger2").Warn("I am logger2")
+	WithName("logger1").Warn("I am logger1")
+	WithName("logger2").Warn("I am logger2")
 
 	println()
 
-	std.WithFields(String("f1", "value"), Int("f2", 888)).Error("Hello world!")
-	std.WithName("logger3").WithFields(String("f1", "value"), Int("f2", 888)).Error("Hello world!")
+	WithFields(String("f1", "value"), Int("f2", 888)).Error("Hello world!")
+	WithName("logger3").WithFields(String("f1", "value"), Int("f2", 888)).Error("Hello world!")
 
 	println()
 
-	//std.DPanic("dpanic message")
-	//std.Panic("panic message")
-	//std.Fatal("fatal message")
+	//DPanic("dpanic message")
+	//Panic("panic message")
+	//Fatal("fatal message")
 
 	// log files rotation test
 	for i := 0; i <= 20000; i++ {
-		std.Infof("hello world: %d", i)
+		Infof("hello world: %d", i)
 	}
 }
 
 func Test_ToContext_FromContext(t *testing.T) {
-	defer std.Sync()
+	defer Sync()
 
-	ctx := std.WithFields(String("f1", "value"), Int("f2", 888)).ToContext(context.Background())
-	std.FromContext(ctx).Info("hello world!")
+	ctx := WithFields(String("f1", "value"), Int("f2", 888)).ToContext(context.Background())
+	FromContext(ctx).Info("hello world!")
+}
+
+func Test_SetHooks(t *testing.T) {
+	defer Sync()
+
+	monitorHook1 := func(entry Entry) error {
+		if entry.Level >= ErrorLevel {
+			fmt.Println("hook1 alert!")
+		}
+		return nil
+	}
+
+	monitorHook2 := func(entry Entry) error {
+		if entry.Level >= ErrorLevel {
+			fmt.Println("hook2 alert!")
+		}
+
+		// This error log is zap internal error, and will write to 'ErrorOutputPaths'.
+		return errors.New("alert hook failed")
+	}
+
+	SetHooks(monitorHook1, monitorHook2)
+
+	Error("set hooks: server failed")
+}
+
+func Test_WithHooks(t *testing.T) {
+	monitorHook3 := func(entry Entry) error {
+		if entry.Level >= ErrorLevel {
+			fmt.Println("hook3 alert!")
+		}
+		return nil
+	}
+
+	logger := New(nil)
+	defer logger.Sync()
+
+	logger.WithHooks(monitorHook3).Error("with hooks: server failed")
+
+	logger.Error("no hooks: server failed")
 }

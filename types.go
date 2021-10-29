@@ -15,6 +15,10 @@ type (
 	Field = zapcore.Field
 	// Level ...
 	Level = zapcore.Level
+	// Entry ...
+	Entry = zapcore.Entry
+	// Hook ...
+	Hook = func(entry Entry) error
 )
 
 // Alias for zap level.
@@ -116,6 +120,7 @@ var (
 
 	WithName   = std.WithName
 	WithFields = std.WithFields
+	WithHooks  = std.WithHooks
 
 	ToContext   = std.ToContext
 	FromContext = std.FromContext
@@ -156,6 +161,7 @@ func resetDefaultLogger() {
 
 	WithName = std.WithName
 	WithFields = std.WithFields
+	WithHooks = std.WithHooks
 
 	ToContext = std.ToContext
 	FromContext = std.FromContext

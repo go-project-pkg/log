@@ -28,6 +28,27 @@ func Init(opts *Options) {
 	resetDefaultLogger()
 }
 
+// SetHooks and replace global logger.
+//
+// Usage e.g.:
+//
+// monitorHook := func(entry log.Entry) error {
+//	  if entry.Level >= log.ErrorLevel {
+//        fmt.Println("alert!")
+//    }
+//    return nil
+// }
+//
+// log.SetHooks(monitorHook)
+//
+// log.Error("server failed")
+//
+func SetHooks(hooks ...Hook) {
+	zapLogger := std.zapLogger.WithOptions(zap.Hooks(hooks...))
+	std = newLogger(zapLogger)
+	resetDefaultLogger()
+}
+
 // New logger instance with given options.
 func New(opts *Options) *Logger {
 	if opts == nil {

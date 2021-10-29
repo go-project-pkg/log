@@ -28,6 +28,9 @@ func main() {
 
     log.WithFields(log.String("f1", "value"), log.Int("f2", 888)).Error("Hello world!")
     log.WithName("logger3").WithFields(log.String("f1", "value"), log.Int("f2", 888)).Error("Hello world!")
+
+    ctx := log.WithFields(String("f1", "value"), Int("f2", 888)).ToContext(context.Background())
+    log.FromContext(ctx).Info("hello world!")
 }
 ```
 
@@ -38,20 +41,6 @@ import "github.com/go-project-pkg/log"
 
 func init() {
     opts := &log.Options{
-        // Take effect when EnableRotate is true.
-        RotateOptions: &log.RotateOptions{
-            // Maximum size in megabytes of the log file before it gets rotated.
-            // Default: 100, if the value is 0, the log files will not be rotated.
-            MaxSize:    1,
-            // Saved days, default 0, means no limit.
-            MaxAge:     30,
-            // Saved count, default 0, means no limit.
-            MaxBackups: 2,
-            // Use local time in log file name, default false.
-            LocalTime:  true,
-            // Gzip log files, default false.
-            Compress:   false,
-        },
         Name:              "",        // logger name
         Level:             "debug",   // debug, info, warn, error, panic, dpanic, fatal
         Format:            "console", // json, console/text
@@ -70,6 +59,20 @@ func init() {
         },
         // Enable log files rotation feature or not.
         EnableRotate: true,
+        // Take effect when EnableRotate is true.
+        RotateOptions: &log.RotateOptions{
+            // Maximum size in megabytes of the log file before it gets rotated.
+            // Default: 100, if the value is 0, the log files will not be rotated.
+            MaxSize:    1,
+            // Saved days, default 0, means no limit.
+            MaxAge:     30,
+            // Saved count, default 0, means no limit.
+            MaxBackups: 2,
+            // Use local time in log file name, default false.
+            LocalTime:  true,
+            // Gzip log files, default false.
+            Compress:   false,
+        },
     }
 
     log.Init(opts)
@@ -89,10 +92,38 @@ func main() {
     log.WithFields(log.String("f1", "value"), log.Int("f2", 888)).Error("Hello world!")
     log.WithName("logger3").WithFields(log.String("f1", "value"), log.Int("f2", 888)).Error("Hello world!")
 
+    ctx := log.WithFields(String("f1", "value"), Int("f2", 888)).ToContext(context.Background())
+    log.FromContext(ctx).Info("hello world!")
+
     // log files rotation test
     for i := 0; i <= 20000; i++ {
         log.Infof("hello world: %d", i)
     }
+}
+```
+
+Use `log.C(ctx context.Context)` for getting logger with additional log fields by cooperating with gin's middleware:
+
+```go
+import "github.com/go-project-pkg/log"
+
+// A middleware of gin for setting logger that with custom fileds to gin.Context
+func Context() gin.HandlerFunc {
+    return func(c *gin.Context) {
+        l := log.WithFields(
+            log.String("x-request-id", c.GetString(XRequestIDKey)),
+            log.String("username", c.GetString(UsernameKey)),
+        )
+        c.Set(log.ContextLoggerName, l)
+
+        c.Next()
+    }
+}
+
+// Others place that use the logger.
+func (u *UserController) Get(c *gin.Context) {
+    // Get logger that with fileds from gin.Context and log a message.
+    log.C(c).Debug("user get called")
 }
 ```
 

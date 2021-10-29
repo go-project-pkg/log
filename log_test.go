@@ -6,28 +6,38 @@ func Test_Init(t *testing.T) {
 	defer std.Sync()
 
 	opts := &Options{
-		RotateOptions: &RotateOptions{ // useful if EnableRotate is true
-			MaxSize:    1,     // MB
-			MaxAge:     0,     // Day
-			MaxBackups: 2,     // saved files count
-			LocalTime:  true,  // use local time in log file name
-			Compress:   false, // gzip
+		// Take effect when EnableRotate is true.
+		RotateOptions: &RotateOptions{
+			// Maximum size in megabytes of the log file before it gets rotated.
+			// Default: 100, if the value is 0, the log files will not be rotated.
+			MaxSize: 1,
+			// Saved days, default 0, means no limit.
+			MaxAge: 30,
+			// Saved count, default 0, means no limit.
+			MaxBackups: 2,
+			// Use local time in log file name, default false.
+			LocalTime: true,
+			// Gzip log files, default false.
+			Compress: false,
 		},
 		Name:              "",        // logger name
-		Level:             "debug",   // debug, info, warn, error, panic, dpanic, fatal
+		Level:             "debug",   // debug, info, warn, error, dpanic, panic, fatal
 		Format:            "console", // json, console/text
 		DisableColor:      false,
 		DisableCaller:     false,
 		DisableStacktrace: false,
-		OutputPaths: []string{ // aplication's all levels logs
+		// Aplication's all levels logs.
+		OutputPaths: []string{
 			"stdout", // os.Stdout
 			"./app.log",
 		},
-		ErrorOutputPaths: []string{ // zap internal errors, not include application's any level logs
+		// Only include zap internal errors, not include application's any level logs.
+		ErrorOutputPaths: []string{
 			"stderr", // os.Stderr
 			"./error.log",
 		},
-		EnableRotate: true, // if rotate log files
+		// Enable log files rotation feature or not.
+		EnableRotate: true,
 	}
 
 	Init(opts)
@@ -60,7 +70,7 @@ func Test_Init(t *testing.T) {
 	//std.Panic("panic message")
 	//std.Fatal("fatal message")
 
-	// log file rotate test
+	// log files rotation test
 	for i := 0; i <= 20000; i++ {
 		std.Infof("hello world: %d", i)
 	}

@@ -36,35 +36,47 @@ Custom your own logger:
 ```go
 import "github.com/go-project-pkg/log"
 
-func main() {
-    defer log.Sync()
-
+func init() {
     opts := &log.Options{
-        RotateOptions: &log.RotateOptions{ // take effect when EnableRotate is true
-            MaxSize:    1,     // MB
-            MaxAge:     0,     // Day
-            MaxBackups: 2,     // saved files count
-            LocalTime:  true,  // use local time in log file name
-            Compress:   false, // gzip
-		    },
+        // Take effect when EnableRotate is true.
+        RotateOptions: &log.RotateOptions{
+            // Maximum size in megabytes of the log file before it gets rotated.
+            // Default: 100, if the value is 0, the log files will not be rotated.
+            MaxSize:    1,
+            // Saved days, default 0, means no limit.
+            MaxAge:     30,
+            // Saved count, default 0, means no limit.
+            MaxBackups: 2,
+            // Use local time in log file name, default false.
+            LocalTime:  true,
+            // Gzip log files, default false.
+            Compress:   false,
+        },
         Name:              "",        // logger name
         Level:             "debug",   // debug, info, warn, error, panic, dpanic, fatal
         Format:            "console", // json, console/text
         DisableColor:      false,
         DisableCaller:     false,
         DisableStacktrace: false,
-        OutputPaths: []string{ // aplication's all levels logs
+        // Aplication's all levels logs.
+        OutputPaths: []string{
             "stdout", // os.Stdout
-            "./app.log",
+            "/var/log/app/app.log",
         },
-        ErrorOutputPaths: []string{ // zap internal errors, not include application's any level logs
+        // Only include zap internal errors, not include application's any level logs.
+        ErrorOutputPaths: []string{
             "stderr", // os.Stderr
-            "./error.log",
+            "/var/log/app/error.log",
         },
-        EnableRotate: true, // log files rotate or not
+        // Enable log files rotation feature or not.
+        EnableRotate: true,
     }
 
     log.Init(opts)
+}
+
+func main() {
+    defer log.Sync()
 
     log.Info("Hello world!")
     log.Info("Hello ", log.String("string_key", "value"), log.Int("int_key", 666))
@@ -79,7 +91,7 @@ func main() {
 
     // log files rotation test
     for i := 0; i <= 20000; i++ {
-      	log.Infof("hello world: %d", i)
+        log.Infof("hello world: %d", i)
     }
 }
 ```

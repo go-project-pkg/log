@@ -127,6 +127,56 @@ func (u *UserController) Get(c *gin.Context) {
 }
 ```
 
+You can add hooks to realize some useful features, like alerting when encountering error logs.
+
+Use `log.SetHooks(hooks ...log.Hook)` for global logger:
+
+```go
+func main() {
+    defer log.Sync()
+
+    monitorHook1 := func(entry log.Entry) error {
+        if entry.Level >= log.ErrorLevel {
+            fmt.Println("hook1 alert!")
+        }
+
+        // This error is zap internal error, and it will write to 'ErrorOutputPaths'.
+        return errors.New("alert hook failed")
+    }
+
+    monitorHook2 := func(entry log.Entry) error {
+        if entry.Level >= log.ErrorLevel {
+            fmt.Println("hook2 alert!")
+        }
+
+        return nil
+    }
+
+    log.SetHooks(monitorHook1, monitorHook2)
+
+    log.Error("set hooks: server error")
+}
+```
+
+Use `log.WithHooks(hooks ...log.Hook)` for current logger instance:
+
+```go
+func main() {
+    defer log.Sync()
+
+    monitorHook1 := func(entry log.Entry) error {
+        if entry.Level >= log.ErrorLevel {
+            fmt.Println("hook1 alert!")
+        }
+
+        // This error is zap internal error, and it will write to 'ErrorOutputPaths'.
+        return errors.New("alert hook failed")
+    }
+
+    log.WithHooks(monitorHook1).Error("with hooks: server error")
+}
+```
+
 ## License
 
 This project is under the MIT License. See the [LICENSE](LICENSE) file for the full license text.

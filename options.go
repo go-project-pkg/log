@@ -1,8 +1,6 @@
 package log
 
-import (
-	"go.uber.org/zap/zapcore"
-)
+import "go.uber.org/zap/zapcore"
 
 const consoleFormat = "console"
 

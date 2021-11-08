@@ -137,7 +137,7 @@ func main() {
 
     monitorHook1 := func(entry log.Entry) error {
         if entry.Level >= log.ErrorLevel {
-            fmt.Println("hook1 alert!")
+            fmt.Printf("hook1 alert! log entry: %v", entry)
         }
 
         // This error is zap internal error, and it will write to 'ErrorOutputPaths'.
@@ -146,7 +146,7 @@ func main() {
 
     monitorHook2 := func(entry log.Entry) error {
         if entry.Level >= log.ErrorLevel {
-            fmt.Println("hook2 alert!")
+            fmt.Println("hook2 alert! log entry: %v", entry)
         }
 
         return nil
@@ -166,7 +166,7 @@ func main() {
 
     monitorHook1 := func(entry log.Entry) error {
         if entry.Level >= log.ErrorLevel {
-            fmt.Println("hook1 alert!")
+            fmt.Println("hook1 alert! log entry: %v", entry)
         }
 
         // This error is zap internal error, and it will write to 'ErrorOutputPaths'.

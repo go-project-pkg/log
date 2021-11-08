@@ -125,6 +125,8 @@ var (
 	ToContext   = std.ToContext
 	FromContext = std.FromContext
 
+	GetOptions = std.GetOptions
+
 	C = std.C
 )
 
@@ -165,6 +167,8 @@ func resetDefaultLogger() {
 
 	ToContext = std.ToContext
 	FromContext = std.FromContext
+
+	GetOptions = std.GetOptions
 
 	C = std.C
 }

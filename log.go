@@ -45,7 +45,7 @@ func Init(opts *Options) {
 //
 func SetHooks(hooks ...Hook) {
 	zapLogger := std.zapLogger.WithOptions(zap.Hooks(hooks...))
-	std = newLogger(zapLogger)
+	std = newLogger(zapLogger, std.options)
 	resetDefaultLogger()
 }
 
@@ -149,7 +149,7 @@ func New(opts *Options) *Logger {
 
 	l = l.WithOptions(zap.AddStacktrace(zapcore.PanicLevel), zap.AddCallerSkip(1))
 
-	return newLogger(l)
+	return newLogger(l, opts)
 }
 
 func buildOptions(cfg *zap.Config, errSink zapcore.WriteSyncer) []zap.Option {

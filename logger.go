@@ -14,25 +14,27 @@ const logContextKey ctxKey = iota
 // Logger ...
 type Logger struct {
 	zapLogger *zap.Logger
+	options   *Options
 }
 
 // Create a new logger instance.
-func newLogger(l *zap.Logger) *Logger {
+func newLogger(l *zap.Logger, o *Options) *Logger {
 	return &Logger{
 		zapLogger: l,
+		options:   o,
 	}
 }
 
 // WithName custom logger name.
 func (l *Logger) WithName(name string) *Logger {
 	logger := l.zapLogger.Named(name)
-	return newLogger(logger)
+	return newLogger(logger, l.options)
 }
 
 // WithFields custom other log entry fileds.
 func (l *Logger) WithFields(fields ...Field) *Logger {
 	logger := l.zapLogger.With(fields...)
-	return newLogger(logger)
+	return newLogger(logger, l.options)
 }
 
 // WithHooks is different from SetHooks,
@@ -40,7 +42,7 @@ func (l *Logger) WithFields(fields ...Field) *Logger {
 // WithHooks is for the new logger.
 func (l *Logger) WithHooks(hooks ...Hook) *Logger {
 	logger := l.zapLogger.WithOptions(zap.Hooks(hooks...))
-	return newLogger(logger)
+	return newLogger(logger, l.options)
 }
 
 // ToContext put logger to context.
@@ -58,6 +60,11 @@ func (l *Logger) FromContext(ctx context.Context) *Logger {
 	}
 
 	return l.WithName("UnknownContext")
+}
+
+// GetOptions get logger instance configuration.
+func (l *Logger) GetOptions() *Options {
+	return l.options
 }
 
 // C get logger from gin.Context.

@@ -147,7 +147,7 @@ func New(opts *Options) *Logger {
 		buildOptions(loggerConfig, errSink)...,
 	)
 
-	l = l.WithOptions(zap.AddStacktrace(zapcore.PanicLevel), zap.AddCallerSkip(1))
+	l = l.WithOptions(zap.AddCallerSkip(1))
 
 	return newLogger(l, opts)
 }
